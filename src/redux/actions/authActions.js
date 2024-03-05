@@ -1,0 +1,103 @@
+import axios from "axios"
+import { toast } from 'react-toastify';
+import { GET_AUTH_USER, LOGIN_USER, LOGOUT_USER } from "../constants/actionTypes";
+
+//register user
+export const registerUser = (formData) => async() => {
+  try {
+    const res = await axios.post("/api/auth/register", formData)
+    if (res) {
+      toast.success(res.data.msg, {
+        position: "top-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light"
+        })
+    }
+  } catch (error) {
+    console.log(error.response.data.msg);
+    toast.error(error.response.data.msg, {
+      position: "top-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light"
+      })
+  }
+}
+
+//login user
+export const loginUser = (formData) => async(dispatch) => {
+  try {
+    const res = await axios.post("/api/auth/login", formData)
+    if (res) {
+      toast.success(res.data.msg, {
+        position: "top-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light"
+        })
+    }
+    dispatch({
+      type: LOGIN_USER,
+      payload: res.data //{msg, user, token}
+    })
+  } catch (error) {
+    console.log(error);
+    toast.error(error.response.data.msg, {
+      position: "top-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light"
+      })
+  }
+}
+
+// logout
+export const logoutUser = () => (dispatch) => {
+  dispatch({type: LOGOUT_USER})
+  toast.success("User logged out", {
+    position: "top-left",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light"
+    })
+}
+
+// get auth user
+export const getAuthUser = () => async (dispatch) => {
+  try {
+    //headers
+    const config = {
+      headers: {
+        'x-auth-token': localStorage.getItem("token")
+      }
+    }
+    const res = await axios.get('/api/auth/user', config)
+    dispatch({
+      type: GET_AUTH_USER,
+      payload: res.data
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
